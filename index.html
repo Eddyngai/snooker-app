@@ -1,194 +1,50 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snooker App</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <h1>Welcome to Snooker App</h1>
-    </header>
-    <main>
-        <section>
-            <h2>Snooker Table</h2>
-            <canvas id="snookerTable" width="900" height="450"></canvas>
-            <div>
-                <button id="cueBallButton">White Ball</button>
-                <button id="targetBallButton">Red Ball</button>
-                <button id="undoButton">Delete Ball</button>
-            </div>
-        </section>
-    </main>
-    <footer>
-        <p>c 2025 Snooker App</p>
-    </footer>
-    <script>
-        const canvas = document.getElementById('snookerTable');
-        const ctx = canvas.getContext('2d');
+function drawTable() {
+    ctx.fillStyle = '#8B4513'; // 咖啡色（桌面顏色）
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // 全局變數
-        let isCueBallActive = false; // 是否準備放置白球
-        let isTargetBallActive = false; // 是否準備放置紅球
-        const balls = []; // 儲存球的位置
-        let cueBall = null; // 儲存主球
+    // 繪製洞口
+    const holeRadius = 25;
+    const holes = [
+        { x: holeRadius, y: holeRadius }, // 左上
+        { x: canvas.width - holeRadius, y: holeRadius }, // 右上
+        { x: canvas.width - holeRadius, y: canvas.height - holeRadius }, // 右下
+        { x: holeRadius, y: canvas.height - holeRadius }, // 左下
+        { x: canvas.width / 2, y: holeRadius }, // 中上
+        { x: canvas.width / 2, y: canvas.height - holeRadius } // 中下
+    ];
 
-        // 繪製桌球?
-        function drawTable() {
-            ctx.fillStyle = '#8B4513'; // 咖啡色（桌面顏色）
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#000000';
+    holes.forEach(hole => {
+        ctx.beginPath();
+        ctx.arc(hole.x, hole.y, holeRadius, 0, Math.PI * 2);
+        ctx.fill();
+    });
 
-            // 繪製洞口
-            const holeRadius = 25;
-            const holes = [
-                { x: holeRadius, y: holeRadius }, // 左上
-                { x: canvas.width - holeRadius, y: holeRadius }, // 右上
-                { x: canvas.width - holeRadius, y: canvas.height - holeRadius }, // 右下
-                { x: holeRadius, y: canvas.height - holeRadius } // 左下
-            ];
+    // 繪製長方形
+    ctx.strokeStyle = '#008000'; // 綠色（長方形顏色）
+    ctx.lineWidth = 5;
 
-            ctx.fillStyle = '#000000';
-            holes.forEach(hole => {
-                ctx.beginPath();
-                ctx.arc(hole.x, hole.y, holeRadius, 0, Math.PI * 2);
-                ctx.fill();
-            });
+    // 繪製連接洞口的長方形
+    ctx.beginPath();
+    ctx.moveTo(holes[0].x, holes[0].y); // 左上
+    ctx.lineTo(holes[1].x, holes[1].y); // 右上
+    ctx.lineTo(holes[2].x, holes[2].y); // 右下
+    ctx.lineTo(holes[3].x, holes[3].y); // 左下
+    ctx.closePath(); // 閉合路徑
+    ctx.stroke(); // 繪製長方形邊框
+    ctx.fillStyle = '#008000'; // 綠色填充
+    ctx.fill(); // 填充長方形
 
-            // 繪製長方形
-            ctx.strokeStyle = '#008000'; // 綠色（長方形顏色）
-            ctx.lineWidth = 5;
+    // 繪製球
+    balls.forEach(ball => {
+        ctx.fillStyle = ball.color;
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+        ctx.fill();
+    });
 
-            // 繪製連接洞口的長方形
-            ctx.beginPath();
-            ctx.moveTo(holes[0].x, holes[0].y); // 左上
-            ctx.lineTo(holes[1].x, holes[1].y); // 右上
-            ctx.lineTo(holes[2].x, holes[2].y); // 右下
-            ctx.lineTo(holes[3].x, holes[3].y); // 左下
-            ctx.closePath(); // 閉合路徑
-            ctx.stroke(); // 繪製長方形邊框
-            ctx.fillStyle = '#008000'; // 綠色填充
-            ctx.fill(); // 填充長方形
-
-            // 繪製球
-            balls.forEach(ball => {
-                ctx.fillStyle = ball.color;
-                ctx.beginPath();
-                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-                ctx.fill();
-            });
-
-            // 繪製桌球桿
-            if (cueBall) {
-                drawCueStick(cueBall.x, cueBall.y);
-            }
-        }
-
-        function drawCueStick(x, y) {
-            const stickLength = 200; // 桿的長度
-            let angle = Math.atan2(mouseY - y, mouseX - x); // 計算角度
-
-            // 虛線的起點
-            const startX = x + cueBall.radius * Math.cos(angle);
-            const startY = y + cueBall.radius * Math.sin(angle);
-
-            ctx.setLineDash([5, 5]); // 設置虛線樣式
-            ctx.strokeStyle = '#C0C0C0'; // 桿的顏色
-            ctx.lineWidth = 5;
-
-            // 計算虛線的終點，最多觸碰桌子四次或紅球
-            let currentX = startX;
-            let currentY = startY;
-            let bounces = 0;
-
-            while (bounces < 4) {
-                // 確定邊界
-                const nextX = currentX + stickLength * Math.cos(angle);
-                const nextY = currentY + stickLength * Math.sin(angle);
-
-                // 檢查是否與紅球碰撞
-                for (const ball of balls) {
-                    if (ball.color === '#FF0000' && isColliding({ x: nextX, y: nextY, radius: 5 }, ball)) {
-                        ctx.beginPath();
-                        ctx.moveTo(currentX, currentY);
-                        ctx.lineTo(ball.x, ball.y);
-                        ctx.stroke();
-                        return; // 停止延伸
-                    }
-                }
-
-                if (nextX <= 0 || nextX >= canvas.width) {
-                    angle = Math.PI - angle; // 反彈
-                    bounces++;
-                }
-                if (nextY <= 0 || nextY >= canvas.height) {
-                    angle = -angle; // 反彈
-                    bounces++;
-                }
-
-                ctx.beginPath();
-                ctx.moveTo(currentX, currentY);
-                currentX += stickLength * Math.cos(angle);
-                currentY += stickLength * Math.sin(angle);
-                ctx.lineTo(currentX, currentY);
-                ctx.stroke();
-            }
-
-            ctx.setLineDash([]); // 重置虛線樣式
-        }
-
-        function isColliding(line, ball) {
-            const distX = line.x - ball.x;
-            const distY = line.y - ball.y;
-            const distance = Math.sqrt(distX * distX + distY * distY);
-            return distance < (ball.radius + line.radius);
-        }
-
-        // 按鍵事件
-        document.getElementById('cueBallButton').onclick = () => {
-            isCueBallActive = true;
-            isTargetBallActive = false;
-        };
-
-        document.getElementById('targetBallButton').onclick = () => {
-            isTargetBallActive = true;
-            isCueBallActive = false;
-        };
-
-        document.getElementById('undoButton').onclick = () => {
-            balls.pop(); // 移除最後一個球
-            cueBall = balls.find(ball => ball.color === '#FFFFFF'); // 更新主球
-            drawTable(); // 重新繪製桌子
-        };
-
-        // 鼠標事件
-        let mouseX, mouseY;
-
-        canvas.onmousemove = (event) => {
-            const rect = canvas.getBoundingClientRect();
-            mouseX = event.clientX - rect.left;
-            mouseY = event.clientY - rect.top;
-            drawTable(); // 重新繪製以顯示虛線
-        };
-
-        canvas.onmousedown = (event) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            if (isCueBallActive) {
-                cueBall = { x: x, y: y, radius: 15, color: '#FFFFFF' }; // 添加白球
-                balls.push(cueBall); // 將其加入球陣列
-                isCueBallActive = false; // 重置狀態
-            } else if (isTargetBallActive) {
-                balls.push({ x: x, y: y, radius: 15, color: '#FF0000' }); // 添加紅球
-                isTargetBallActive = false; // 重置狀態
-            }
-
-            drawTable(); // 重新繪製桌子和球
-        };
-
-        drawTable(); // 初始繪製
-    </script>
-</body>
-</html>
+    // 繪製桌球桿
+    if (cueBall) {
+        drawCueStick(cueBall.x, cueBall.y);
+    }
+}
