@@ -29,26 +29,26 @@
         const canvas = document.getElementById('snookerTable');
         const ctx = canvas.getContext('2d');
 
-        // ¥ş§½ÅÜ¼Æ
-        let isCueBallActive = false; // ¬O§_·Ç³Æ©ñ¸m¥Õ²y
-        let isTargetBallActive = false; // ¬O§_·Ç³Æ©ñ¸m¬õ²y
-        const balls = []; // Àx¦s²yªº¦ì¸m
-        let cueBall = null; // Àx¦s¥D²y
+        // å…¨å±€è®Šæ•¸
+        let isCueBallActive = false; // æ˜¯å¦æº–å‚™æ”¾ç½®ç™½çƒ
+        let isTargetBallActive = false; // æ˜¯å¦æº–å‚™æ”¾ç½®ç´…çƒ
+        const balls = []; // å„²å­˜çƒçš„ä½ç½®
+        let cueBall = null; // å„²å­˜ä¸»çƒ
 
-        // Ã¸»s®à²y?
+        // ç¹ªè£½æ¡Œçƒ?
         function drawTable() {
-            ctx.fillStyle = '#8B4513'; // ©@°Ø¦â¡]®à­±ÃC¦â¡^
+            ctx.fillStyle = '#8B4513'; // å’–å•¡è‰²ï¼ˆæ¡Œé¢é¡è‰²ï¼‰
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Ã¸»s¬}¤f
+            // ç¹ªè£½æ´å£
             const holeRadius = 25;
             const holes = [
-                { x: holeRadius, y: holeRadius }, // ¥ª¤W
-                { x: canvas.width - holeRadius, y: holeRadius }, // ¥k¤W
-                { x: canvas.width - holeRadius, y: canvas.height - holeRadius }, // ¥k¤U
-                { x: holeRadius, y: canvas.height - holeRadius }, // ¥ª¤U
-                { x: canvas.width / 2, y: holeRadius }, // ¤¤¤W
-                { x: canvas.width / 2, y: canvas.height - holeRadius } // ¤¤¤U
+                { x: holeRadius, y: holeRadius }, // å·¦ä¸Š
+                { x: canvas.width - holeRadius, y: holeRadius }, // å³ä¸Š
+                { x: canvas.width - holeRadius, y: canvas.height - holeRadius }, // å³ä¸‹
+                { x: holeRadius, y: canvas.height - holeRadius }, // å·¦ä¸‹
+                { x: canvas.width / 2, y: holeRadius }, // ä¸­ä¸Š
+                { x: canvas.width / 2, y: canvas.height - holeRadius } // ä¸­ä¸‹
             ];
 
             ctx.fillStyle = '#000000';
@@ -58,22 +58,22 @@
                 ctx.fill();
             });
 
-            // Ã¸»sªø¤è§Î
-            ctx.strokeStyle = '#008000'; // ºñ¦â¡]ªø¤è§ÎÃC¦â¡^
+            // ç¹ªè£½é•·æ–¹å½¢
+            ctx.strokeStyle = '#008000'; // ç¶ è‰²ï¼ˆé•·æ–¹å½¢é¡è‰²ï¼‰
             ctx.lineWidth = 5;
 
-            // Ã¸»s³s±µ¬}¤fªºªø¤è§Î
+            // ç¹ªè£½é€£æ¥æ´å£çš„é•·æ–¹å½¢
             ctx.beginPath();
-            ctx.moveTo(holes[0].x, holes[0].y); // ¥ª¤W
-            ctx.lineTo(holes[1].x, holes[1].y); // ¥k¤W
-            ctx.lineTo(holes[2].x, holes[2].y); // ¥k¤U
-            ctx.lineTo(holes[3].x, holes[3].y); // ¥ª¤U
-            ctx.closePath(); // ³¬¦X¸ô®|
-            ctx.stroke(); // Ã¸»sªø¤è§ÎÃä®Ø
-            ctx.fillStyle = '#008000'; // ºñ¦â¶ñ¥R
-            ctx.fill(); // ¶ñ¥Rªø¤è§Î
+            ctx.moveTo(holes[0].x, holes[0].y); // å·¦ä¸Š
+            ctx.lineTo(holes[1].x, holes[1].y); // å³ä¸Š
+            ctx.lineTo(holes[2].x, holes[2].y); // å³ä¸‹
+            ctx.lineTo(holes[3].x, holes[3].y); // å·¦ä¸‹
+            ctx.closePath(); // é–‰åˆè·¯å¾‘
+            ctx.stroke(); // ç¹ªè£½é•·æ–¹å½¢é‚Šæ¡†
+            ctx.fillStyle = '#008000'; // ç¶ è‰²å¡«å……
+            ctx.fill(); // å¡«å……é•·æ–¹å½¢
 
-            // Ã¸»s²y
+            // ç¹ªè£½çƒ
             balls.forEach(ball => {
                 ctx.fillStyle = ball.color;
                 ctx.beginPath();
@@ -81,51 +81,51 @@
                 ctx.fill();
             });
 
-            // Ã¸»s®à²y±ì
+            // ç¹ªè£½æ¡Œçƒæ¡¿
             if (cueBall) {
                 drawCueStick(cueBall.x, cueBall.y);
             }
         }
 
         function drawCueStick(x, y) {
-            const stickLength = 200; // ±ìªºªø«×
-            let angle = Math.atan2(mouseY - y, mouseX - x); // ­pºâ¨¤«×
+            const stickLength = 200; // æ¡¿çš„é•·åº¦
+            let angle = Math.atan2(mouseY - y, mouseX - x); // è¨ˆç®—è§’åº¦
 
-            // µê½uªº°_ÂI
+            // è™›ç·šçš„èµ·é»
             const startX = x + cueBall.radius * Math.cos(angle);
             const startY = y + cueBall.radius * Math.sin(angle);
 
-            ctx.setLineDash([5, 5]); // ³]¸mµê½u¼Ë¦¡
-            ctx.strokeStyle = '#C0C0C0'; // ±ìªºÃC¦â
+            ctx.setLineDash([5, 5]); // è¨­ç½®è™›ç·šæ¨£å¼
+            ctx.strokeStyle = '#4d3900'; // æ¡¿çš„é¡è‰²
             ctx.lineWidth = 5;
 
-            // ­pºâµê½uªº²×ÂI¡A³Ì¦hÄ²¸I®à¤l¥|¦¸©Î¬õ²y
+            // è¨ˆç®—è™›ç·šçš„çµ‚é»ï¼Œæœ€å¤šè§¸ç¢°æ¡Œå­å››æ¬¡æˆ–ç´…çƒ
             let currentX = startX;
             let currentY = startY;
             let bounces = 0;
 
             while (bounces < 4) {
-                // ½T©wÃä¬É
+                // ç¢ºå®šé‚Šç•Œ
                 const nextX = currentX + stickLength * Math.cos(angle);
                 const nextY = currentY + stickLength * Math.sin(angle);
 
-                // ÀË¬d¬O§_»P¬õ²y¸I¼²
+                // æª¢æŸ¥æ˜¯å¦èˆ‡ç´…çƒç¢°æ’
                 for (const ball of balls) {
                     if (ball.color === '#FF0000' && isColliding({ x: nextX, y: nextY, radius: 5 }, ball)) {
                         ctx.beginPath();
                         ctx.moveTo(currentX, currentY);
                         ctx.lineTo(ball.x, ball.y);
                         ctx.stroke();
-                        return; // °±¤î©µ¦ù
+                        return; // åœæ­¢å»¶ä¼¸
                     }
                 }
 
                 if (nextX <= 0 || nextX >= canvas.width) {
-                    angle = Math.PI - angle; // ¤Ï¼u
+                    angle = Math.PI - angle; // åå½ˆ
                     bounces++;
                 }
                 if (nextY <= 0 || nextY >= canvas.height) {
-                    angle = -angle; // ¤Ï¼u
+                    angle = -angle; // åå½ˆ
                     bounces++;
                 }
 
@@ -137,7 +137,7 @@
                 ctx.stroke();
             }
 
-            ctx.setLineDash([]); // ­«¸mµê½u¼Ë¦¡
+            ctx.setLineDash([]); // é‡ç½®è™›ç·šæ¨£å¼
         }
 
         function isColliding(line, ball) {
@@ -147,7 +147,7 @@
             return distance < (ball.radius + line.radius);
         }
 
-        // «öÁä¨Æ¥ó
+        // æŒ‰éµäº‹ä»¶
         document.getElementById('cueBallButton').onclick = () => {
             isCueBallActive = true;
             isTargetBallActive = false;
@@ -159,19 +159,19 @@
         };
 
         document.getElementById('undoButton').onclick = () => {
-            balls.pop(); // ²¾°£³Ì«á¤@­Ó²y
-            cueBall = balls.find(ball => ball.color === '#FFFFFF'); // §ó·s¥D²y
-            drawTable(); // ­«·sÃ¸»s®à¤l
+            balls.pop(); // ç§»é™¤æœ€å¾Œä¸€å€‹çƒ
+            cueBall = balls.find(ball => ball.color === '#FFFFFF'); // æ›´æ–°ä¸»çƒ
+            drawTable(); // é‡æ–°ç¹ªè£½æ¡Œå­
         };
 
-        // ¹«¼Ğ¨Æ¥ó
+        // é¼ æ¨™äº‹ä»¶
         let mouseX, mouseY;
 
         canvas.onmousemove = (event) => {
             const rect = canvas.getBoundingClientRect();
             mouseX = event.clientX - rect.left;
             mouseY = event.clientY - rect.top;
-            drawTable(); // ­«·sÃ¸»s¥HÅã¥Üµê½u
+            drawTable(); // é‡æ–°ç¹ªè£½ä»¥é¡¯ç¤ºè™›ç·š
         };
 
         canvas.onmousedown = (event) => {
@@ -180,18 +180,18 @@
             const y = event.clientY - rect.top;
 
             if (isCueBallActive) {
-                cueBall = { x: x, y: y, radius: 15, color: '#FFFFFF' }; // ²K¥[¥Õ²y
-                balls.push(cueBall); // ±N¨ä¥[¤J²y°}¦C
-                isCueBallActive = false; // ­«¸mª¬ºA
+                cueBall = { x: x, y: y, radius: 15, color: '#FFFFFF' }; // æ·»åŠ ç™½çƒ
+                balls.push(cueBall); // å°‡å…¶åŠ å…¥çƒé™£åˆ—
+                isCueBallActive = false; // é‡ç½®ç‹€æ…‹
             } else if (isTargetBallActive) {
-                balls.push({ x: x, y: y, radius: 15, color: '#FF0000' }); // ²K¥[¬õ²y
-                isTargetBallActive = false; // ­«¸mª¬ºA
+                balls.push({ x: x, y: y, radius: 15, color: '#FF0000' }); // æ·»åŠ ç´…çƒ
+                isTargetBallActive = false; // é‡ç½®ç‹€æ…‹
             }
 
-            drawTable(); // ­«·sÃ¸»s®à¤l©M²y
+            drawTable(); // é‡æ–°ç¹ªè£½æ¡Œå­å’Œçƒ
         };
 
-        drawTable(); // ªì©lÃ¸»s
+        drawTable(); // åˆå§‹ç¹ªè£½
     </script>
 <footer>
     <p>Join Our YouTube Channel: <a href="https://www.youtube.com/@NOPOCKETMONSTER" target="_blank">NO POCKET MONSTER HK</a></p>
