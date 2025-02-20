@@ -25,3 +25,9 @@ footer {
     width: 100%;
     bottom: 0;
 }
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    border: 1px solid #000; /* ²K¥[Ãä®Ø */
+}

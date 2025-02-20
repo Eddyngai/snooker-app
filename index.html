@@ -8,16 +8,47 @@
 </head>
 <body>
     <header>
-        <h1>Welcome to Snooker App</h1>
+        <h1>Welcome Snooker App</h1>
     </header>
     <main>
         <section>
-            <h2>Function</h2>
-            <p>Testing1</p>
+            <h2>Snooker table/h2>
+            <canvas id="snookerTable" width="800" height="400"></canvas>
         </section>
     </main>
     <footer>
         <p>c 2025 Snooker App</p>
     </footer>
+    <script>
+        const canvas = document.getElementById('snookerTable');
+        const ctx = canvas.getContext('2d');
+
+        // 繪製桌球?
+        ctx.fillStyle = '#007A33'; // 桌面顏色
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 繪製邊框
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+        // 繪製洞口
+        const holeRadius = 20;
+        const holes = [
+            { x: holeRadius, y: holeRadius },
+            { x: canvas.width - holeRadius, y: holeRadius },
+            { x: holeRadius, y: canvas.height - holeRadius },
+            { x: canvas.width - holeRadius, y: canvas.height - holeRadius },
+            { x: canvas.width / 2, y: holeRadius },
+            { x: canvas.width / 2, y: canvas.height - holeRadius }
+        ];
+
+        ctx.fillStyle = '#000000';
+        holes.forEach(hole => {
+            ctx.beginPath();
+            ctx.arc(hole.x, hole.y, holeRadius, 0, Math.PI * 2);
+            ctx.fill();
+        });
+    </script>
 </body>
 </html>
