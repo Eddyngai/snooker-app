@@ -36,21 +36,16 @@
 
         // 繪製桌球?
         function drawTable() {
-            ctx.fillStyle = '#007A33'; // 桌面顏色
+            ctx.fillStyle = '#8B4513'; // 咖啡色（桌面顏色）
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 10;
-            ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
             // 繪製洞口
             const holeRadius = 25;
             const holes = [
-                { x: holeRadius, y: holeRadius },
-                { x: canvas.width - holeRadius, y: holeRadius },
-                { x: holeRadius, y: canvas.height - holeRadius },
-                { x: canvas.width - holeRadius, y: canvas.height - holeRadius },
-                { x: canvas.width / 2, y: holeRadius },
-                { x: canvas.width / 2, y: canvas.height - holeRadius }
+                { x: holeRadius, y: holeRadius }, // 左上
+                { x: canvas.width - holeRadius, y: holeRadius }, // 右上
+                { x: canvas.width - holeRadius, y: canvas.height - holeRadius }, // 右下
+                { x: holeRadius, y: canvas.height - holeRadius } // 左下
             ];
 
             ctx.fillStyle = '#000000';
@@ -59,6 +54,21 @@
                 ctx.arc(hole.x, hole.y, holeRadius, 0, Math.PI * 2);
                 ctx.fill();
             });
+
+            // 繪製長方形
+            ctx.strokeStyle = '#008000'; // 綠色（長方形顏色）
+            ctx.lineWidth = 5;
+
+            // 繪製連接洞口的長方形
+            ctx.beginPath();
+            ctx.moveTo(holes[0].x, holes[0].y); // 左上
+            ctx.lineTo(holes[1].x, holes[1].y); // 右上
+            ctx.lineTo(holes[2].x, holes[2].y); // 右下
+            ctx.lineTo(holes[3].x, holes[3].y); // 左下
+            ctx.closePath(); // 閉合路徑
+            ctx.stroke(); // 繪製長方形邊框
+            ctx.fillStyle = '#008000'; // 綠色填充
+            ctx.fill(); // 填充長方形
 
             // 繪製球
             balls.forEach(ball => {
