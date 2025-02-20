@@ -23,24 +23,30 @@
     const canvas = document.getElementById('snookerTable');
     const ctx = canvas.getContext('2d');
 
+    // 調整桌球桌大小
+    const tableWidth = 900; // 桌球桌寬度
+    const tableHeight = 450; // 桌球桌高度
+    canvas.width = tableWidth;
+    canvas.height = tableHeight;
+
     // 繪製桌球?
     ctx.fillStyle = '#007A33'; // 桌面顏色
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, tableWidth, tableHeight);
 
     // 繪製邊框
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 10;
-    ctx.strokeRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeRect(0, 0, tableWidth, tableHeight);
 
     // 繪製洞口
-    const holeRadius = 20;
+    const holeRadius = 25; // 洞口半徑
     const holes = [
         { x: holeRadius, y: holeRadius },
-        { x: canvas.width - holeRadius, y: holeRadius },
-        { x: holeRadius, y: canvas.height - holeRadius },
-        { x: canvas.width - holeRadius, y: canvas.height - holeRadius },
-        { x: canvas.width / 2, y: holeRadius },
-        { x: canvas.width / 2, y: canvas.height - holeRadius }
+        { x: tableWidth - holeRadius, y: holeRadius },
+        { x: holeRadius, y: tableHeight - holeRadius },
+        { x: tableWidth - holeRadius, y: tableHeight - holeRadius },
+        { x: tableWidth / 2, y: holeRadius },
+        { x: tableWidth / 2, y: tableHeight - holeRadius }
     ];
 
     ctx.fillStyle = '#000000';
@@ -50,15 +56,17 @@
         ctx.fill();
     });
 
+    // 隨意放置主球和目標球的變數
+    const cueBall = { x: tableWidth / 2, y: tableHeight / 2, radius: 15 }; // 主球
+    const targetBall = { x: cueBall.x + 100, y: cueBall.y, radius: 15 }; // 目標球
+
     // 繪製主球
-    const cueBall = { x: canvas.width / 2, y: canvas.height / 2, radius: 10 };
     ctx.fillStyle = '#FFFFFF'; // 主球顏色
     ctx.beginPath();
     ctx.arc(cueBall.x, cueBall.y, cueBall.radius, 0, Math.PI * 2);
     ctx.fill();
 
     // 繪製目標球
-    const targetBall = { x: cueBall.x + 50, y: cueBall.y, radius: 10 };
     ctx.fillStyle = '#FF0000'; // 目標球顏色
     ctx.beginPath();
     ctx.arc(targetBall.x, targetBall.y, targetBall.radius, 0, Math.PI * 2);
